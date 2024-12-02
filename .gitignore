@@ -1,0 +1,10 @@
+logs/
+airflow.db
+airflow.cfg
+webserver_config.py
+scheduler.log
+webserver.log
+airflow-webserver.pid
+__pycache__/
+airflow-env/
+.keys/

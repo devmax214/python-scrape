@@ -1,0 +1,13 @@
+bs4
+pandas
+requests
+lxml
+selenium
+mysql-connector-python
+bs4
+Scrapy
+jinja2
+fake_useragent
+webdriver_manager
+selenium-wire
+firebase-admin

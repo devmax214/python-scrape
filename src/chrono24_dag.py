@@ -1,0 +1,37 @@
+from datetime import datetime
+from airflow import DAG
+from airflow.models import Variable
+from airflow.operators.bash_operator import BashOperator
+from airflow.operators.python import PythonOperator
+from process import main
+from scripts.common.constants import *
+
+dag = DAG(
+	'chrono24_scraper',
+	description='Chrono24 Scraper DAG',
+	schedule_interval=Variable.get("chrono24_schedule_interval", default_var = "@hourly"),
+	start_date=datetime(SCHEDULER_START_DATE[0], SCHEDULER_START_DATE[1], SCHEDULER_START_DATE[2]),
+	catchup=False,
+	is_paused_upon_creation=False
+)
+
+task_start = BashOperator(
+	task_id = 'start_task',
+	bash_command = 'echo start',
+	dag = dag
+)
+
+scrapping = PythonOperator(
+	task_id="run_scraper",
+	python_callable=main,
+ 	op_kwargs={'retailer_type': str(RETAIL_TYPES['chrono24']), 'prefix_url': 'https://www.chrono24.com/'},
+ 	dag = dag
+)
+
+task_end = BashOperator(
+	task_id = 'end_task',
+	bash_command = 'echo end',
+	dag = dag
+)
+
+task_start >> scrapping >> task_end
